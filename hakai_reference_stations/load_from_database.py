@@ -4,6 +4,7 @@ import click
 import pandas as pd
 from hakai_api import Client
 from loguru import logger
+import numpy as np
 
 STATIONS_ENDPOINT = "eims/views/output/sites"
 ORGANIZATION_WORK_AREAS = {
@@ -71,6 +72,7 @@ def get_stations_from_database(api_root, credentials, output):
     output.parent.mkdir(parents=True, exist_ok=True)
 
     df = pd.DataFrame(response.json())
+    df = df.replace({pd.NA: None, np.NaN: ""})
     df["organization"] = df["work_area"].map(work_areas_to_organization)
     if df["organization"].isnull().any():
         logger.warning(

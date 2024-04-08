@@ -6,6 +6,7 @@ import jinja2
 import pandas as pd
 from folium.plugins import FastMarkerCluster
 from loguru import logger
+import numpy as np
 
 from hakai_reference_stations.load_from_database import ORGANIZATION_WORK_AREAS
 
@@ -55,15 +56,42 @@ def generate_map(stations, output, center=[49.5, -125], zoom_level=6):
 
 @click.command()
 @click.option(
-    "--stations_csv", help="CSV file with the stations", default="docs/stations.csv"
+    "--stations_csv",
+    help="CSV file with the stations",
+    default="docs/stations.csv",
+    type=click.Path(exists=True),
 )
-@click.option("--output", help="Output file", default="docs/index.html")
-def create_base_map(stations_csv="output/stations.csv", output="docs/map.html"):
+@click.option(
+    "--output",
+    type=click.Path(file_okay=False, dir_okay=True),
+    help="Output file",
+    default=Path("."),
+)
+@click.option(
+    "--base_directory",
+    type=click.Path(file_okay=False, dir_okay=True),
+    help="Base directory for the output files",
+    default="docs",
+)
+def create_base_map(stations_csv: Path, output: Path, base_directory: Path):
+    (base_directory / output).mkdir(parents=True, exist_ok=True)
     # Load the stations
     df = pd.read_csv(stations_csv).dropna(subset=["latitude", "longitude"])
-
-    # Generate the map
-    generate_map(df, output)
+    df = df.replace({pd.NA: "", np.NaN: ""})
+    # Generate the pages
+    (base_directory / output / "index.html").write_text(
+        environment.get_template("index.html").render(
+            base_directory=base_directory, output=output
+        )
+    )
+    generate_map(df,base_directory / output / "map.html")
+    (base_directory / output / "table.html").write_text(
+        environment.get_template("table.html").render(
+            table_html=df.to_html(index=False, classes="table table-striped table-hover table-sm", escape=False, table_id="stations-table"),
+            base_directory=base_directory,
+            output=output,
+        )
+    )
 
 
 if __name__ == "__main__":
