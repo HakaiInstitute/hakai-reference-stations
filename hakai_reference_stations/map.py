@@ -29,7 +29,7 @@ function (row) {
 
 def generate_map(stations, output, center=[49.5, -125], zoom_level=6):
     def _popup(row):
-        return f"{row['organization']}<br>Work Area: {row['work_area']}<br>Station: {row['name']}"
+        return f"<div style='width:100px;'><strong>{row['name']}</strong><br>Organization: {row['organization']}<br>Work Area: {row['work_area']}</div>"
 
     # Create a map
     m = folium.Map(location=center, zoom_start=6)
@@ -39,16 +39,19 @@ def generate_map(stations, output, center=[49.5, -125], zoom_level=6):
         color = ORGANIZATION_WORK_AREAS[group_id[0]]["color"]
         logger.debug("Adding group {}", group_id)
         logger.debug("Color: {}", color)
-        FastMarkerCluster(
-            data=df_group.assign(color=color)[
-                ["latitude", "longitude", "color", "name"]
-            ].values.tolist(),
-            popups=df_group.apply(_popup, axis=1).values.tolist(),
-            name=f"{group_id[0]}: {group_id[1]}",
-            overlay=True,
-            control=True,
-            callback=marker_callback,
-        ).add_to(m)
+        layer = folium.FeatureGroup(name=f"{group_id[0]}: {group_id[1]}")
+        for id,row in df_group.iterrows():
+            folium.CircleMarker(
+                location=[row["latitude"], row["longitude"]],
+                popup=_popup(row),
+                radius=3,
+                color=color,
+                stroke=False,
+                fill=True,
+                fill_opacity=0.5,
+                tooltip=row["name"],
+            ).add_to(layer)
+        layer.add_to(m)
     folium.LayerControl().add_to(m)
     # Render the map
     m.save(output)
