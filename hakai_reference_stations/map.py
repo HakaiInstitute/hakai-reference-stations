@@ -3,10 +3,9 @@ from pathlib import Path
 import click
 import folium
 import jinja2
-import pandas as pd
-from folium.plugins import FastMarkerCluster
-from loguru import logger
 import numpy as np
+import pandas as pd
+from loguru import logger
 
 from hakai_reference_stations.load_from_database import ORGANIZATION_WORK_AREAS
 
@@ -87,10 +86,15 @@ def create_base_map(stations_csv: Path, output: Path, base_directory: Path):
             base_directory=base_directory, output=output
         )
     )
-    generate_map(df,base_directory / output / "map.html")
+    generate_map(df, base_directory / output / "map.html")
     (base_directory / output / "table.html").write_text(
         environment.get_template("table.html").render(
-            table_html=df.to_html(index=False, classes="table table-striped table-hover table-sm", escape=False, table_id="stations-table"),
+            table_html=df.to_html(
+                index=False,
+                classes="table table-striped table-hover table-sm",
+                escape=False,
+                table_id="stations-table",
+            ),
             base_directory=base_directory,
             output=output,
         )

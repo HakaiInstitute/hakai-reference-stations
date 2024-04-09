@@ -1,10 +1,10 @@
 from pathlib import Path
 
 import click
+import numpy as np
 import pandas as pd
 from hakai_api import Client
 from loguru import logger
-import numpy as np
 
 STATIONS_ENDPOINT = "eims/views/output/sites"
 ORGANIZATION_WORK_AREAS = {
