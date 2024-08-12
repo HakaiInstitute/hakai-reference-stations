@@ -4,7 +4,7 @@ from loguru import logger
 
 
 @click.command()
-@click.option("--file", help="Path to the CSV file with the stations", default='docs/stations.csv')
+@click.option("--file", help="Path to the CSV file with the stations", default='stations.csv')
 @click.option("--output", help="Output file")
 def main(file='station.csv',output=None):
     """Sort the stations by organization, work_area, and name.
