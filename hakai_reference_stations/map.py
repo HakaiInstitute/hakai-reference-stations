@@ -63,7 +63,7 @@ def generate_map(stations, output, center=[49.5, -125], zoom_start=6):
 @click.option(
     "--stations_csv",
     help="CSV file with the stations",
-    default="docs/stations.csv",
+    default="stations.csv",
     type=click.Path(exists=True),
 )
 @click.option(

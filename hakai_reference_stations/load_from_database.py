@@ -57,7 +57,7 @@ SORT_BY = ["organization", "work_area", "name"]
 @click.command()
 @click.option("--api_root", help="Root URL of the API")
 @click.option("--credentials", help="API token credentials")
-@click.option("--output", default="docs/stations.csv", help="Output file")
+@click.option("--output", default="stations.csv", help="Output file")
 def get_stations_from_database(api_root, credentials, output):
     # Initialize the client
     client = Client(credentials=credentials)

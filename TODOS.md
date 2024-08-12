@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Add a link to repository on the map page
+- [x] Add a link to repository on the map page
 - [ ] Lock main branch
 - [ ] Sync station.csv file main branch with hakai eims/site table
 - [ ] Generate issues for each organizations unknown CTD stations
