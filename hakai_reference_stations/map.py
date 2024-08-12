@@ -30,18 +30,18 @@ def generate_map(stations, output, center=[49.5, -125], zoom_start=6):
     def _popup(row):
         return (
             f"<div style='width:150px;'><strong>{row['name']}</strong><br>"
-            f"Organization: {row['organization']}<br>Work Area: {row['work_area']}</div>"
+            f"Organization: {row['organization']}<br>Work Area: {row['work_area']} {row['program']}</div>"
         )
 
     # Create a map
     m = folium.Map(location=center, zoom_start=zoom_start)
 
     # Add the stations
-    for group_id, df_group in stations.groupby(["organization", "work_area"]):
+    for group_id, df_group in stations.groupby(["organization", "work_area","program"]):
         color = ORGANIZATION_WORK_AREAS[group_id[0]]["color"]
         logger.debug("Adding group {}", group_id)
         logger.debug("Color: {}", color)
-        layer = folium.FeatureGroup(name=f"{group_id[0]}: {group_id[1]}")
+        layer = folium.FeatureGroup(name=f"{group_id[0]}: {group_id[1]} {group_id[2]}".strip())
         for id, row in df_group.iterrows():
             folium.CircleMarker(
                 location=[row["latitude"], row["longitude"]],
